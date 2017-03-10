@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         refresh();
-        progressDialog.dismiss();
+//        progressDialog.dismiss();
 
         ((ImageButton) findViewById(R.id.imageButtonRefresh)).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -230,7 +230,7 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     icon.setImageResource(R.drawable.ic_cloud_queue_black_24dp);
                 }
-                progressDialog = null;
+//                progressDialog = null;
             }
         }.execute();
 
