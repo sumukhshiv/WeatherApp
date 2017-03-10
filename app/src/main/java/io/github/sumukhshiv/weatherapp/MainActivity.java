@@ -114,6 +114,7 @@ public class MainActivity extends AppCompatActivity {
                     temperature = json.getJSONObject("currently").getString("temperature");
                     double value = Double.parseDouble(temperature);
                     int temp = (int) Math.round(value);
+
                     formattedTemperature = Integer.toString(temp);
 
 
@@ -201,35 +202,38 @@ public class MainActivity extends AppCompatActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    textViewTemperature = (TextView) findViewById(R.id.textViewTemperature);
+                    textViewRain = (TextView) findViewById(R.id.textViewRain);
+                    textViewDescription = (TextView) findViewById(R.id.textViewDescription);
+                    textViewDescription = (TextView) findViewById(R.id.textViewDescription);
+                    icon = (ImageView) findViewById(R.id.icon);
+
+                    LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                    if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION },
+                                0);
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
+                    }
                     try {
-                        LocationManager lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                            // TODO: Consider calling
-                            //    ActivityCompat#requestPermissions
-                            // here to request the missing permissions, and then overriding
-                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                            //                                          int[] grantResults)
-                            // to handle the case where the user grants the permission. See the documentation
-                            // for ActivityCompat#requestPermissions for more details.
-                            return;
-                        }
                         Location location2 = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
                         final double longitude = location2.getLongitude();
                         final double latitude = location2.getLatitude();
                         latlong.clear();
                         latlong.add(latitude);
                         latlong.add(longitude);
-                        //location.add(latitude + "," + longitude);
                         location.clear();
                         location.add(latlong.get(0) + "," + latlong.get(1));
                     } catch (Exception e) {
                         Log.d("BAD", "unable to pull location");
-                        //location = "37.85267,-122.4233";
                     }
-
-
-
-                    //x.execute();
 
                     new AsyncTask<Void, Void, Void>() {
                         protected Void doInBackground(Void... voids) {
@@ -248,10 +252,13 @@ public class MainActivity extends AppCompatActivity {
                                 Log.d("DEBUG", json.toString());
                                 temperature = json.getJSONObject("currently").getString("temperature");
                                 double value = Double.parseDouble(temperature);
-                                // int temp = Math.round(value);
+                                int temp = (int) Math.round(value);
+
+                                formattedTemperature = Integer.toString(temp);
 
 
                                 description = json.getJSONObject("currently").getString("summary");
+                                iconType = json.getJSONObject("currently").getString("icon");
                                 JSONArray minuteData = json.getJSONObject("minutely").getJSONArray("data");
                                 willRainInCurrentHour = false;
 
@@ -293,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         protected void onPostExecute(Void aVoid) {
 
-                            textViewTemperature.setText(temperature + " °");
+                            textViewTemperature.setText(formattedTemperature + "°");
                             textViewDescription.setText(description);
                             if (willRainInCurrentHour) {
 
@@ -304,11 +311,19 @@ public class MainActivity extends AppCompatActivity {
                                 textViewRain.setText("It will not rain in the next hour!");
                             }
 
+                            if (iconType.equals("clear-day")) {
+                                icon.setImageResource(R.drawable.ic_brightness_high_black_24dp);
+                            }
+                            else if (iconType.equals("clear-night")) {
+                                icon.setImageResource(R.drawable.ic_brightness_2_black_24dp);
+                            }
+                            else {
+                                icon.setImageResource(R.drawable.ic_cloud_queue_black_24dp);
+                            }
+
                         }
                     }.execute();
-
-
-
+                    
                 } else {
 
                     // permission denied, boo! Disable the
