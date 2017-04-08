@@ -11,9 +11,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.ImageButton;
+
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -42,11 +40,8 @@ public class MainActivity extends AppCompatActivity {
     String temperature;
     String formattedTemperature;
     String description;
-    int rainMinute;
     Boolean willRainInCurrentHour;
     String formattedTime;
-    String stringLatitude;
-    String stringLongitude;
     String iconType;
     final ArrayList<Double> latlong = new ArrayList<>();
     final ArrayList<String> location = new ArrayList<>();
@@ -58,29 +53,20 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         refresh();
-//        progressDialog.dismiss();
-
-        ((ImageButton) findViewById(R.id.imageButtonRefresh)).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                refresh();
-            }
-        });
-
-
-
     }
 
+
+
+    // Modular function for API calls
     static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
 
+
     @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
             case 0: {
                 // If request is cancelled, the result arrays are empty.
@@ -88,21 +74,21 @@ public class MainActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     refresh();
                 } else {
-
                     progressDialog.dismiss();
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 
-    public void refresh() {
+
+    /**
+     * Modular, Private method used to make API call
+     * Retrieves the Temperature and Time it will rain
+     * Sets these values in the respective fields
+     * This function uses the phones last known function
+     */
+    private void refresh() {
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
@@ -120,13 +106,7 @@ public class MainActivity extends AppCompatActivity {
             ActivityCompat.requestPermissions(this,
                     new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION },
                     0);
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+
             progressDialog.dismiss();
             return;
         }
@@ -174,17 +154,14 @@ public class MainActivity extends AppCompatActivity {
                     for (int i = 0; i < 60; i ++) {
                         if (minuteData.getJSONObject(i).getInt("precipProbability") > 0) {
                             willRainInCurrentHour =  true;
-//                            rainMinute = minuteData.getJSONObject(i).getInt("time");
                             long unixSeconds = minuteData.getJSONObject(i).getInt("time");
                             Date date = new Date(unixSeconds*1000L); // *1000 is to convert seconds to milliseconds
                             SimpleDateFormat sdf = new SimpleDateFormat("h:mm a"); // the format of your date
-                            sdf.setTimeZone(TimeZone.getTimeZone("GMT-8")); // give a timezone reference for formating (see comment at the bottom
+                            sdf.setTimeZone(TimeZone.getTimeZone("GMT-7")); // give a timezone reference for formating (see comment at the bottom
                             formattedTime = sdf.format(date);
                             break;
                         }
                     }
-
-
 
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -212,6 +189,7 @@ public class MainActivity extends AppCompatActivity {
 
                 textViewTemperature.setText(formattedTemperature + "°");
                 textViewDescription.setText(description);
+
                 if (willRainInCurrentHour) {
 
                     textViewRain.setText("It will rain at " + formattedTime);
@@ -230,9 +208,17 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     icon.setImageResource(R.drawable.ic_cloud_queue_black_24dp);
                 }
-//                progressDialog = null;
             }
         }.execute();
 
     }
 }
+
+
+//        Code for Refresh button
+//        ((ImageButton) findViewById(R.id.imageButtonRefresh)).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                refresh();
+//            }
+//        });

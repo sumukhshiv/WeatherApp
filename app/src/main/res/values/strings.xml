@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">WeatherApp</string>
+    <string name="will_it_rain">Will it Rain?</string>
+    <string name="description">Description</string>
+    <string name="number">##</string>
+    <string name="powered_by_dark_sky">Powered by Dark Sky</string>
 </resources>
