@@ -1,11 +1,5 @@
-<<<<<<< HEAD
 # WeatherApp
-=======
-# sp17proj5android
 
-Repository for Spring 2017 MDB Android Training Program Mini-Project 5 Submissions
+This is a simple, intuitive weather application that shows users weather data based on their current location. In addition to showing the current temperature, this android app also displays the a description of the weather and gives detailed information about precipitation. Specifically, it lets the user know whether it will rain within the next hour and if so, at what minute it will begin raining. This was all powered by the Dark Sky API. The major dev concepts used in this project are HTTP Requests, Geolocation services, and JSON objects.
 
-Finalized mini-projects should be stored in personal portfolios, but this repository will be used for providing feedback on code quality using the GitHub code review features.
-
-When pushing code to this repo, DO NOT push to master. Create a new branch and open a pull request.
->>>>>>> f1d01e90a027960a34f72887b14b53b083d56567
+![Alt text](/main_weather.png?raw=true "Main")
